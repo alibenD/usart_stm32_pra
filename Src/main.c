@@ -51,10 +51,12 @@ UART_HandleTypeDef huart1;
 /* Private variables ---------------------------------------------------------*/
 #define RXBUFFERSIZE 1
 #define USART_REC_LEN 20
-uint8_t aRxBuffer[RXBUFFERSIZE];
+uint8_t  aRxBuffer[RXBUFFERSIZE];
 uint8_t* ptrRxBuffer = &aRxBuffer[0];
-uint8_t USART_RX_BUF[USART_REC_LEN];
+uint8_t  USART_RX_BUF[USART_REC_LEN];
 uint8_t* ptr_buffer = &USART_RX_BUF[0];
+uint8_t  msg_over_length[30] = "\n***Too long message***\n";
+uint8_t* ptr_over_length = &msg_over_length[0];
 uint16_t USART_RX_STA = 0x0000;
 
 /* USER CODE END PV */
@@ -143,6 +145,10 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
           if(index + 1> 20)
           {
             USART_RX_STA = 0;
+            HAL_UART_Transmit(&huart1,
+                              ptr_over_length,
+                              strlen(msg_over_length),
+                              100);
             status = 1;
           }
         }
